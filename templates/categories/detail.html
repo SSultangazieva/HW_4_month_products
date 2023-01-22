@@ -17,8 +17,11 @@
             width: 200px;
         }
     </style>
+    <div class="card-body">
+        <h1 class="card-title">{{ cat_key.name }}</h1>
+    </div>
     <div class="products">
-        {% for i in products %}
+        {% for i in products_key %}
             <div class="card" style="width: 22rem;">
                 <div class="card-body">
                     {% if i.image %}

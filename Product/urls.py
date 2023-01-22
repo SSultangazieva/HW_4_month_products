@@ -16,12 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from products.views import *
-from . import settings
+from Product.settings import MEDIA_URL, MEDIA_ROOT
 from django.conf.urls.static import static
+
+
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main),
-    path('products/',products_views)
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('products/', products_views),
+    path('products/<int:id>/', pruduct_detail_view),
+    path('categories/', cat_views),
+    path('categories/<int:id>/', cat_detail_view),
 
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
