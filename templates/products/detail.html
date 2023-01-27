@@ -19,14 +19,18 @@
             padding: 10px;
             margin-bottom: 20px;
         }
-        .product > img{
-            width: 100%;
+        .product img{
+            width:80%
 
         }
     </style>
 
     <div class="product">
-        <img src="/media/{{ product_key.image }}/">
+        {% if product_key.image %}
+            <img src="/media/{{ product_key.image }}/" alt="image not found ):">
+        {% else %}
+            <img src="/media/def.jpg" alt="">
+        {% endif %}
         <h1>{{ product_key.name }}</h1>
         <h4>{{ product_key.description }}</h4>
         <h4>Rate: {{ product_key.price }}</h4>
@@ -35,11 +39,16 @@
             <h5>{{ product_key.modified_date }}</h5>
             <h5>{{ product_key.category.name }}</h5>
         </div>
+        <form action="/products/{{ product_key.id }}/" method="post">
+            {% csrf_token %}
+            {{ comment_form }}
+            <input type="submit" value="Create Reviewa">
+        </form>
         <div class="review">
-            {% for i in comment_key %}
+           {% for i in comment_key%}
                 <div class="review">
-                    <h6> {{ i.text }}</h6>
-                    <p> {{ i.Creted_Date }}</p>
+                    <h6> {{ i.text}}</h6>
+                    <p> {{ i.Creted_Date}}<p>
                 </div>
             {% endfor %}
 
@@ -47,3 +56,30 @@
 
     </div>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
