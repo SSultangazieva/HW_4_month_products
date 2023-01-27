@@ -7,7 +7,7 @@ class Category(models.Model):
 class Products(models.Model): # класс Python, который наследуется о модуля- django.db.models.Model.
     # Каждый атрибут модели - ПОЛЕ БД
     image = models.ImageField(null=True, blank=True)
-    name = models.CharField(max_length=255, default=None)
+    name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.FloatField()
     created_date = models.DateField(auto_now_add=True)
@@ -15,6 +15,6 @@ class Products(models.Model): # класс Python, который наследу
     category = models.ForeignKey(Category,on_delete=models.SET_NULL, null=True, blank=True)
 
 class Review(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, null=True)
     text = models.TextField()
     Creted_Date = models.DateField(auto_now_add=True)

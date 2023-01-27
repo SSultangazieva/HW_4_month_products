@@ -71,7 +71,7 @@ def crate_products_view(request):
 
         if form.is_valid():
             Products.objects.create(
-                title=form.cleaned_data.get('title'),
+                name=form.cleaned_data.get('name'),
                 description=form.cleaned_data.get('description'),
                 price=form.cleaned_data['price'] if form.cleaned_data['price'] is not None else 5
             )
