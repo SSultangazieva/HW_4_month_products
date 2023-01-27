@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from products.models import *
+from django.shortcuts import render, redirect
+from products.models import Products, Category, Review
+from products.form import ProductCreateForm
 
 
 # Create your views here.
@@ -56,3 +57,26 @@ def pruduct_detail_view(request, id):
             'comment_key': review
         }
         return render(request, 'products/detail.html', context=context)
+
+
+def crate_products_view(request):
+    if request.method == 'GET':
+        context = {
+            'form': ProductCreateForm
+        }
+        return render(request, 'products/create.html', context=context)
+
+    if request.method == 'POST':
+        form = ProductCreateForm(data=request.POST)
+
+        if form.is_valid():
+            Products.objects.create(
+                name=form.cleaned_data.get('name'),
+                description=form.cleaned_data.get('description'),
+                price=form.cleaned_data.get('price', 5)
+            )
+            return redirect('/products/')
+        return render(request, 'products/create.html', context={
+            'form': form
+        })
+
