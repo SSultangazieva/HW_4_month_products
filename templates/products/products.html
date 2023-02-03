@@ -1,6 +1,11 @@
 {% extends 'layouts/index.html' %}
 
 {% block content %}
+    <form action="/products" method="get">
+            <input type="text" name="search">
+            <input type="submit" value="search">
+    </form>
+
     <style type="text/css">
         .products {
             width: 80%;
@@ -38,4 +43,13 @@
             </div>
         {% endfor %}
     </div>
+
+    <div class="pages">
+        {% for page in max_page %}
+            <a href="/products/?page={{ page }}">
+                <button>{{ page }}</button>
+            </a>
+        {% endfor %}
+    </div>
+
 {% endblock %}

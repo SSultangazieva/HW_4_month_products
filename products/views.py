@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from products.models import Products, Category, Review
 from products.form import ProductCreateForm, ReviewCreateForm
 
+# лимит объектов на одной странице для пагинации:
+PAGINATION_LIMIT = 3
+
 
 # Create your views here.
 # логика отдачи главной страницы:
@@ -39,11 +42,24 @@ def products_views(request):
     if request.method == 'GET':
         # достать все посты в БД, через объектный менеджер objects (он позв работать с БД)
         products_1 = Products.objects.all()
-
+        # достать сам запрос:
+        search = request.GET.get('search')
+        # достать страницу из query запроса, по дефолту 1 страница
+        page = int(request.GET.get('page', 1))
+        if search is not None:
+            # найти продукты согласно запросу и присвоить его переменной.Важно правильно указать параметр
+            products_1 = Products.objects.filter(name__icontains=search)
+        max_page = products_1.__len__() / PAGINATION_LIMIT
+        if round(max_page) < max_page:# для чисел с плавающей точкой ДО 0,5 чтобы прибавить к ним 1
+            max_page = round(max_page) + 1
+        else:  # для чисел ПОСЛЕ 0,5
+            max_page = round(max_page)
+        # срез продуктов для каждой страницы (с какого по какой пост отрисовать):
+        products_1 = products_1[PAGINATION_LIMIT * (page-1): PAGINATION_LIMIT * page]
         # отправить все посты на наш шаблон
         context = {
-            'products': products_1
-        }
+            'products': products_1,
+            'max_page': range(1, max_page+1) }
         return render(request, 'products/products.html', context=context)
         # параметр context= чтобы из view отправить данные
 
