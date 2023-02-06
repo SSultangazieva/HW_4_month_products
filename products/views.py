@@ -77,7 +77,8 @@ def pruduct_detail_view(request, id):
         context = {
             'product_key': product_obj,
             'comment_key': review,
-            'comment_form': ReviewCreateForm
+            'comment_form': ReviewCreateForm,
+            'user': request.user
         }
         return render(request, 'products/detail.html', context=context)
 

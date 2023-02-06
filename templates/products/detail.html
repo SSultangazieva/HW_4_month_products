@@ -41,8 +41,11 @@
         </div>
         <form action="/products/{{ product_key.id }}/" method="post">
             {% csrf_token %}
-            {{ comment_form }}
-            <input type="submit" value="Create Reviewa">
+            {% if user.username %}
+                {{ comment_form }}
+                <input type="submit" value="Create Reviewa">
+            {% endif %}
+
         </form>
         <div class="review">
            {% for i in comment_key%}
