@@ -39,6 +39,9 @@
                         <h5> {{ i.created_date }} </h5>
                         <h5> {{ i.modified_date }} </h5>
                     </div>
+                    {% if i.author.username %}
+                        <h5>{{ i.author.username }}</h5>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

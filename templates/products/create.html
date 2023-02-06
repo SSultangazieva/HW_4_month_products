@@ -1,7 +1,7 @@
 {% extends 'layouts/index.html' %}
 
 {% block content %}
-    <form action="/products/create/" method="post">
+    <form action="/products/create/" method="post" enctype="">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Creat Product">

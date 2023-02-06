@@ -47,10 +47,16 @@
         <div class="review">
            {% for i in comment_key%}
                 <div class="review">
+                    <h6> {{ i.author.username}}</h6>
                     <h6> {{ i.text}}</h6>
                     <p> {{ i.Creted_Date}}<p>
                 </div>
+                {% if i.author.username %}
+                <h5>{{ i.author.username }}</h5>
+                {% endif %}
+
             {% endfor %}
+
 
         </div>
 

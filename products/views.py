@@ -48,7 +48,8 @@ def products_views(request):
         page = int(request.GET.get('page', 1))
         if search is not None:
             # найти продукты согласно запросу и присвоить его переменной.Важно правильно указать параметр
-            products_1 = Products.objects.filter(name__icontains=search)
+            products_1 = Products.objects.filter(name__icontains=search) or \
+                         Products.objects.filter(description__icontains=search)
         max_page = products_1.__len__() / PAGINATION_LIMIT
         if round(max_page) < max_page:# для чисел с плавающей точкой ДО 0,5 чтобы прибавить к ним 1
             max_page = round(max_page) + 1
@@ -56,10 +57,14 @@ def products_views(request):
             max_page = round(max_page)
         # срез продуктов для каждой страницы (с какого по какой пост отрисовать):
         products_1 = products_1[PAGINATION_LIMIT * (page-1): PAGINATION_LIMIT * page]
+
         # отправить все посты на наш шаблон
         context = {
             'products': products_1,
-            'max_page': range(1, max_page+1) }
+            'autor': request.user,
+            'max_page': range(1, max_page+1),
+            'user': request.user
+        }
         return render(request, 'products/products.html', context=context)
         # параметр context= чтобы из view отправить данные
 
@@ -79,18 +84,21 @@ def pruduct_detail_view(request, id):
     elif request.method == 'POST':
         if form.is_valid():
             Review.objects.create(
+                author=request.user,
                 text=form.cleaned_data.get('text'),
                 product_id=id
             )
             return redirect(f"/products/{id}/")
 
 
-def crate_products_view(request):
-    if request.method == 'GET':
+def create_products_view(request):
+    if request.method == 'GET' and not request.user.is_anonymous:
         context = {
             'form': ProductCreateForm
         }
         return render(request, 'products/create.html', context=context)
+    elif request.user.is_anonymous:
+        return redirect('/products')
 
     if request.method == 'POST':
         form = ProductCreateForm(data=request.POST)

@@ -7,6 +7,7 @@ class ProductCreateForm(forms.Form):
     price = forms.FloatField(required=False)
 
 
+
 class ReviewCreateForm(forms.Form):
     text = forms.CharField()
 
