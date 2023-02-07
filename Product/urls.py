@@ -23,12 +23,12 @@ from Users.views import auth_view, logout_view, register_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', main),
-    path('products/', products_views),
-    path('products/<int:id>/', pruduct_detail_view),
-    path('categories/', cat_views),
+    path('', MainView.as_view()),
+    path('products/', Products_View.as_view()),
+    path('products/<int:id>/', Products_Detail.as_view()),
+    path('categories/', CategoriesCBV.as_view()),
     path('categories/<int:id>/', cat_detail_view),
-    path('products/create/', create_products_view),
+    path('products/create/', CreateView.as_view()),
 
     #users
     path('users/login/', auth_view),
