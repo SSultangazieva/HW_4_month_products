@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from products.models import Products, Category, Review
 from products.form import ProductCreateForm, ReviewCreateForm
-from django.views.generic import ListView, CreateView, DetailView, FormView
+from django.views.generic import ListView, CreateView, DetailView, FormView, View
 
 # лимит объектов на одной странице для пагинации:
 PAGINATION_LIMIT = 3
@@ -81,6 +81,30 @@ def cat_detail_view(request, id):
 #         return render(request, 'products/products.html', context=context)
 #         # параметр context= чтобы из view отправить данные
 #
+class ProductDetailView(DetailView, CreateView):
+    model = Products
+    template_name = 'products/detail.html'
+    pk_url_kwarg = 'id'
+    queryset = Products.objects.all()
+    form_class = ProductCreateForm
+
+    def get_context_data(self, **kwargs):
+        return {
+            'product': self.get_object(),
+            'reviews': Review.objects.filter(product=self.get_object()),
+            'form': kwargs.get('form', self.form_class)
+        }
+
+    def post(self, request, *args, **kwargs):
+        form = ReviewCreateForm(data=request.POST)
+
+        if form.is_valid():
+            Review.objects.create(
+                author_id=request.user.id,
+                product_id=id,
+                text=form.cleaned_data.get('text'),
+            )
+            return redirect(f'/products/{id}/')
 
 class Products_View(ListView):
     model = Products
@@ -111,111 +135,78 @@ class Products_View(ListView):
         return render(request, self.template_name, context=context)
 
 
-def pruduct_detail_view(request, id):
-    form = ReviewCreateForm(data=request.POST)
-    if request.method == 'GET':
-        product_obj = Products.objects.get(id=id)
-        review = Review.objects.filter(product=product_obj)
-        context = {
-            'product_key': product_obj,
-            'comment_key': review,
-            'comment_form': ReviewCreateForm,
-            'user': request.user
-        }
-        return render(request, 'products/detail.html', context=context)
-
-    elif request.method == 'POST':
-        if form.is_valid():
-            Review.objects.create(
-                author=request.user,
-                text=form.cleaned_data.get('text'),
-                product_id=id
-            )
-            return redirect(f"/products/{id}/")
-#
-# def check_user(request):
-#     return None if request.user.is_anonymous else request.user
-# def rend(request):
+# def pruduct_detail_view(request, id):
+#     form = ReviewCreateForm(data=request.POST)
 #     if request.method == 'GET':
-#         return render(request, 'layouts/index.html', context={
-#             "user": check_user(request)
-#         })
+#         product_obj = Products.objects.get(id=id)
+#         review = Review.objects.filter(product=product_obj)
+#         context = {
+#             'product_key': product_obj,
+#             'comment_key': review,
+#             'comment_form': ReviewCreateForm,
+#             'user': request.user
+#         }
+#         return render(request, 'products/detail.html', context=context)
 #
-# class Products_Detail(DetailView, CreateView):
-#     queryset = Products.objects.all()
-#     context_object_name = "product_key"
-#     template_name = "products/detail.html"
-#     form_class = ReviewCreateForm
-#     model = Products
-#
-#
-#     def get(self, request, pk=None, **kwargs):
-#         product = Products.objects.get(pk=pk)
-#         return render(request, self.template_name, context={
-#             "comment_form": self.form_class,
-#             "product_key": product,
-#             'comment_key': product.reviews.all(),
-#             "categories": product.category
-#         })
-#
-#     def post(self, request, pk=None, **kwargs):
-#         form = self.form_class(request.POST)
+#     elif request.method == 'POST':
 #         if form.is_valid():
 #             Review.objects.create(
-#                 product_id=pk,
-#                 author_id=request.user.id,
-#                 text=form.cleaned_data.get("text")
+#                 author=request.user,
+#                 text=form.cleaned_data.get('text'),
+#                 product_id=id
 #             )
-#             return redirect(f"/products/{pk}/")
+#             return redirect(f"/products/{id}/")
+#
 
+class CreateProduct(ListView, CreateView):
+    model = Products
+    template_name = 'products/create.html'
+    form = ProductCreateForm
 
-
-def create_products_view(request):
-    if request.method == 'GET' and not request.user.is_anonymous:
+    def get(self, request, **kwargs):
         context = {
-            'form': ProductCreateForm
+            'form': ProductCreateForm,
         }
         return render(request, 'products/create.html', context=context)
-    elif request.user.is_anonymous:
-        return redirect('/products')
 
-    if request.method == 'POST':
-        form = ProductCreateForm(data=request.POST)
+    def post(self, request, **kwargs):
+        form = ProductCreateForm(request.POST, request.FILES)
 
         if form.is_valid():
             Products.objects.create(
+                image=form.cleaned_data.get('image'),
                 name=form.cleaned_data.get('name'),
                 description=form.cleaned_data.get('description'),
-                price=form.cleaned_data['price'] if form.cleaned_data['price'] is not None else 5
+                price=form.cleaned_data['price'] if form.cleaned_data['price'] is not None else 5,
+                quantity=form.cleaned_data.get('quantity'),
             )
             return redirect('/products/')
         return render(request, 'products/create.html', context={
-            'form': form
+            'form': form,
         })
 
+# def create_products_view(request):
+#     if request.method == 'GET' and not request.user.is_anonymous:
+#         context = {
+#             'form': ProductCreateForm
+#         }
+#         return render(request, 'products/create.html', context=context)
+#     elif request.user.is_anonymous:
+#         return redirect('/products')
 #
-# class ProductCreateCBV(FormView):
-#     model = Products
-#     template_name = 'products/create.html'
-#     form_class = ProductCreateForm
-#     queryset = Products.objects.all()
-#
-#     def get_context_data(self, *, object_list=None, **kwargs):
-#         return {
-#             'form': kwargs['form'] if kwargs.get('form') else self.form_class
-#             }
-#
-#     def post(self, request, *args, **kwargs):
-#         form = self.form_class(data=request.POST)
+#     if request.method == 'POST':
+#         form = ProductCreateForm(data=request.POST)
 #
 #         if form.is_valid():
-#             self.model.objects.create(
-#                 author_id=request.user.id,
-#                 title=form.cleaned_data.get('title'),
+#             Products.objects.create(
+#                 name=form.cleaned_data.get('name'),
 #                 description=form.cleaned_data.get('description'),
-#                 price=form.cleaned_data.get('price'),
-#
+#                 price=form.cleaned_data['price'] if form.cleaned_data['price'] is not None else 5
 #             )
-#             return redirect('/products')
-#         else:
-#             return render(request, self.template_name, context=self.get_context_data(form=form))
+#             return redirect('/products/')
+#         return render(request, 'products/create.html', context={
+#             'form': form
+#         })
+
+
+

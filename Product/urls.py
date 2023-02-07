@@ -25,10 +25,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', MainView.as_view()),
     path('products/', Products_View.as_view()),
-    path('products/<int:id>/', pruduct_detail_view),
+    path('products/<int:id>/', ProductDetailView.as_view()),
     path('categories/', CategoriesCBV.as_view()),
     path('categories/<int:id>/', cat_detail_view),
-    path('products/create/', create_products_view),
+    path('products/create/', CreateProduct.as_view()),
 
     #users
     path('users/login/', auth_view),
