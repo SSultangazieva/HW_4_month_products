@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from products.views import *
+from products.views import CreateProduct,cat_detail_view, CategoriesCBV,ProductDetailView,Products_View,MainView
 from Product.settings import MEDIA_URL, MEDIA_ROOT
 from django.conf.urls.static import static
-from Users.views import auth_view, logout_view, register_view
+from Users.views import LoginView, RegisterView, LogoutView
 
 
 urlpatterns = [
@@ -31,13 +31,9 @@ urlpatterns = [
     path('products/create/', CreateProduct.as_view()),
 
     #users
-    path('users/login/', auth_view),
-
-    #logout
-    path('users/logout/', logout_view),
-
-    # register
-    path('users/register/', register_view),
-
+    path('users/login/', LoginView.as_view()),
+    path('users/logout/', LogoutView.as_view()),
+    path('users/register/', RegisterView.as_view()),
 ]
+
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
