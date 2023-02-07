@@ -62,7 +62,7 @@ class RegisterView(ListView, CreateView):
                 )
                 return redirect('/users/login/')
             else:
-                form.add_error('password_1', 'оне тупи')
+                form.add_error('password_1', 'не тупи')
 
         return render(request, 'users/register.html', context={
             'form': form,
