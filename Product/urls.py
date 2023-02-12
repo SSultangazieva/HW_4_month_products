@@ -15,25 +15,41 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from products.views import CreateProduct,cat_detail_view, CategoriesCBV,ProductDetailView,Products_View,MainView
+from products.views import *
 from Product.settings import MEDIA_URL, MEDIA_ROOT
 from django.conf.urls.static import static
-from Users.views import LoginView, RegisterView, LogoutView
+from Users.views import *
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', MainView.as_view()),
-    path('products/', Products_View.as_view()),
-    path('products/<int:id>/', ProductDetailView.as_view()),
-    path('categories/', CategoriesCBV.as_view()),
+    path('', main),
+    path('products/', products_views),
+    path('products/<int:id>/', product_detail_view),
+    path('categories/', categories_views),
     path('categories/<int:id>/', cat_detail_view),
-    path('products/create/', CreateProduct.as_view()),
+    path('products/create/', create_products_view),
 
     #users
-    path('users/login/', LoginView.as_view()),
-    path('users/logout/', LogoutView.as_view()),
-    path('users/register/', RegisterView.as_view()),
+    path('users/login/', auth_view),
+    path('users/logout/', logout_view),
+    path('users/register/',register_view),
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
+
+# Для CBV(Class Based Views):
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('', MainView.as_view()),
+#     path('products/', Products_View.as_view()),
+#     path('products/<int:id>/', ProductDetailView.as_view()),
+#     path('categories/', CategoriesCBV.as_view()),
+#     path('categories/<int:id>/', cat_detail_view),
+#     path('products/create/', CreateProduct.as_view()),
+#
+#     #users
+#     path('users/login/', LoginView.as_view()),
+#     path('users/logout/', LogoutView.as_view()),
+#     path('users/register/', RegisterView.as_view()),
+# ]

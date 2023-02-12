@@ -34,6 +34,11 @@
         <h1>{{ product_key.name }}</h1>
         <h4>{{ product_key.description }}</h4>
         <h4>Rate: {{ product_key.price }}</h4>
+
+        {% for hush in hashtags %}
+            <p>{{ hush.title }}</p>
+        {% endfor %}
+
         <div class="dates">
             <h5>{{ product_key.created_date }}</h5>
             <h5>{{ product_key.modified_date }}</h5>

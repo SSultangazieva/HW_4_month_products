@@ -48,11 +48,19 @@
     </div>
 
     <div class="pages">
+        <a href="/products/?page={{ prev_page}}">
+            <button>Prev</button>
+        </a>
+
         {% for page in max_page %}
             <a href="/products/?page={{ page }}">
                 <button>{{ page }}</button>
             </a>
         {% endfor %}
+
+         <a href="/products/?page={{ next_page}}">
+            <button>Next</button>
+        </a>
     </div>
 
 {% endblock %}
